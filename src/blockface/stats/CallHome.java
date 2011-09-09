@@ -88,7 +88,7 @@ class CallTask implements Runnable {
     }
 
     private String postUrl() throws Exception {
-        String url = String.format("http://plugins.blockface.org/usage/update.php?name=%s&build=%s&plugin=%s&port=%s&public=%s",
+        String url = String.format("http://usage.blockface.org/update.php?name=%s&build=%s&plugin=%s&port=%s&public=%s",
                 plugin.getServer().getName(),
                 plugin.getDescription().getVersion(),
                 plugin.getDescription().getName(),
