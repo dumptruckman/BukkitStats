@@ -52,7 +52,7 @@ public class CallHome{
     }
 
     private static Boolean verifyConfig() {
-        File config = new File("plugins/usage/config.yml");
+        File config = new File("plugins/stats/config.yml");
         if(!config.getParentFile().exists()) config.getParentFile().mkdir();
         if(!config.exists()) try {
             config.createNewFile();
