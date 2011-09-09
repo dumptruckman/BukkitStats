@@ -40,26 +40,29 @@ import java.net.URLConnection;
 
 public class CallHome{
 
+    private static Configuration cfg=null;
+
     public static void load(Plugin plugin) {
-        if(verifyConfig()) return;
-        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin,new CallTask(plugin),0L,20L*60L*10);
+        if(cfg==null)verifyConfig();
+        if(cfg.getBoolean("opt-out",false)) return;
+        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin,new CallTask(plugin,cfg.getBoolean("list-server",true)),0L,20L*60L*10);
         System.out.println(plugin.getDescription().getName() + " is keeping usage stats. To opt-out for whatever bizarre reason, check plugins/stats.");
 
     }
 
-    private static Boolean verifyConfig() {
+    private static void verifyConfig() {
         File config = new File("plugins/stats/config.yml");
         if(!config.getParentFile().exists()) config.getParentFile().mkdir();
         if(!config.exists()) try {
             config.createNewFile();
         } catch (IOException e) {
-            return false;
+            return;
         }
-        Configuration cfg = new Configuration(config);
+        cfg=new Configuration(config);
         cfg.load();
-        Boolean res = cfg.getBoolean("opt-out",false);
+        cfg.getBoolean("opt-out",false);
+        cfg.getBoolean("list-server",true);
         cfg.save();
-        return res;
     }
 
 
@@ -67,10 +70,13 @@ public class CallHome{
 
 class CallTask implements Runnable {
     private Plugin plugin;
+    private int pub=1;
 
-    public CallTask(Plugin plugin) {
+    public CallTask(Plugin plugin,Boolean pub) {
         this.plugin = plugin;
+        if(!pub) this.pub = 0;
     }
+
 
 
     public void run() {
@@ -82,11 +88,12 @@ class CallTask implements Runnable {
     }
 
     private String postUrl() throws Exception {
-        String url = String.format("http://plugins.blockface.org/usage/update.php?name=%s&build=%s&plugin=%s&port=%s",
+        String url = String.format("http://plugins.blockface.org/usage/update.php?name=%s&build=%s&plugin=%s&port=%s&public=%s",
                 plugin.getServer().getName(),
                 plugin.getDescription().getVersion(),
                 plugin.getDescription().getName(),
-                plugin.getServer().getPort());
+                plugin.getServer().getPort(),
+                pub);
         URL oracle = new URL(url);
         URLConnection yc = oracle.openConnection();
         BufferedReader in = new BufferedReader(
