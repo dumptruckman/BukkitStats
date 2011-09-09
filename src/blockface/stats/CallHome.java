@@ -40,13 +40,9 @@ import java.net.URLConnection;
 
 public class CallHome{
 
-    private static Plugin plugin;
-    private static int task=-1;
-
-    public static void load(Plugin p) {
+    public static void load(Plugin plugin) {
         if(verifyConfig()) return;
-        plugin = p;
-        task = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin,new CallTask(plugin),0L,20L*60L*10);
+        plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin,new CallTask(plugin),0L,20L*60L*10);
         System.out.println(plugin.getDescription().getName() + " is keeping usage stats. To opt-out for whatever bizarre reason, check plugins/stats.");
 
     }
@@ -64,13 +60,6 @@ public class CallHome{
         Boolean res = cfg.getBoolean("opt-out",false);
         cfg.save();
         return res;
-    }
-
-    public static void unload() {
-        if(task>-1) {
-            System.out.println(plugin.getDescription().getName() + " ");
-
-        }
     }
 
 
