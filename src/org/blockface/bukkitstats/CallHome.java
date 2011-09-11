@@ -43,26 +43,32 @@ public class CallHome{
     private static Configuration cfg=null;
 
     public static void load(Plugin plugin) {
-        if(cfg==null)verifyConfig();
+        if(cfg==null) {
+            if(!verifyConfig()) return;
+        }
         if(cfg.getBoolean("opt-out",false)) return;
         plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin,new CallTask(plugin,cfg.getBoolean("list-server",true)),0L,20L*60L*10);
         System.out.println(plugin.getDescription().getName() + " is keeping usage stats an. To opt-out for whatever bizarre reason, check plugins/stats.");
 
     }
 
-    private static void verifyConfig() {
+    private static Boolean verifyConfig() {
+        Boolean ret = true;
         File config = new File("plugins/stats/config.yml");
         if(!config.getParentFile().exists()) config.getParentFile().mkdir();
         if(!config.exists()) try {
             config.createNewFile();
+            ret = false;
+            System.out.println("BukkitStats has initialized for the first time. To opt-out check plugins/stats");
         } catch (IOException e) {
-            return;
+            return false;
         }
         cfg=new Configuration(config);
         cfg.load();
         cfg.getBoolean("opt-out",false);
-        cfg.getBoolean("list-server",true);
+        cfg.getBoolean("list-server", true);
         cfg.save();
+        return ret;
     }
 
 
