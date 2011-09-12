@@ -106,8 +106,9 @@ class CallTask implements Runnable {
                                 new InputStreamReader(
                                 yc.getInputStream()));
         String inputLine;
+        String result = "";
         while ((inputLine = in.readLine()) != null)
-            inputLine += "";
-        return inputLine;
+            result += inputLine;
+        return result;
     }
 }
