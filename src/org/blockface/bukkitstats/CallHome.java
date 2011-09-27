@@ -25,6 +25,7 @@
 
 package org.blockface.bukkitstats;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.config.Configuration;
 
